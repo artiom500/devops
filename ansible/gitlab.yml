@@ -1,0 +1,7 @@
+- hosts: gitlab
+  gather_facts: no
+  become: yes
+  vars:
+       reg_token: GR1348941RmWQ-GHXKZ1ULAXbvFL_
+  roles:
+    - gitlab-runner

@@ -1,0 +1,29 @@
+---
+# tasks file for gitlab-runner
+  - name: Add gitlab-runner user to docker group
+    user:
+      name: gitlab-runner
+      append: yes
+      groups: docker
+  - name: Install gitlab runner
+    shell: |
+      curl -L --output /usr/local/bin/gitlab-runner https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
+      chmod +x /usr/local/bin/gitlab-runner
+      useradd --comment 'GitLab Runner' --create-home gitlab-runner --shell /bin/bash
+      gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab-runner
+
+    args:
+      creates: /usr/bin/gitlab-runner
+
+  - name: Register gitlab shell runner
+    command: |
+      gitlab-runner register \
+      --non-interactive \
+      --url "https://gitlab.com/" \
+      --registration-token "{{ reg_token }}" \
+      --executor "shell" \
+      --description "shell executor" \
+      --tag-list " shell" \
+      --run-untagged="false" \
+      --locked="true" \
+      --access-level="ref_protected"

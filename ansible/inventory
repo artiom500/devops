@@ -1,0 +1,14 @@
+[srv]
+158.160.41.204 ansible_user=ubuntu
+
+[app]
+158.160.42.152 ansible_user=ubuntu
+
+[master]
+158.160.36.213 ansible_user=ubuntu
+
+[kube]
+158.160.42.152 ansible_user=ubuntu
+158.160.36.213 ansible_user=ubuntu
+[gitlab]
+158.160.47.95 ansible_user=ubuntu

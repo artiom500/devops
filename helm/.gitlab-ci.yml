@@ -1,0 +1,42 @@
+variables:
+  DOCKER_HOST: tcp://localhost:2375/
+  DOCKER_DRIVER: overlay2
+  APP_NAME: django
+  DB_NAME: postgres
+stages:
+    - build
+    - push
+    - deploy
+    - cleanup
+
+build:
+  stage: build
+  script:
+  - sudo docker-compose build 
+
+push:
+ stage: push
+ script:
+   - sudo docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" 
+   #- IMAGE=$(sudo docker images | awk NR==2 | awk  '{print $3 }')
+   - sudo docker tag helm_app:latest artiom500/django:v1
+   - sudo docker push artiom500/django:v1
+
+deploy:
+  stage: deploy
+  image: alpine/helm:3.2.1
+  script:
+    - sudo docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - sudo helm upgrade --install  --namespace ${APP_NAME} ${DB_NAME} .helm/postgre/.
+    - sudo helm upgrade --install  --namespace ${APP_NAME} ${APP_NAME} .helm/django/.
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
+      when: always
+
+cleanup:
+  stage: cleanup
+  image: alpine/helm:3.2.1
+  script:
+   - sudo helm delete --namespace ${APP_NAME} ${APP_NAME} 
+   - sudo helm delete --namespace ${APP_NAME} ${DB_NAME}
+  when: manual

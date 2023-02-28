@@ -1,0 +1,14 @@
+replica: 1
+
+image:
+  repository: artiom500/django
+  tag: v1
+  pullPolicy: Always
+
+service:
+  name: django
+  type: NodePort
+  port: 3003
+  targetPort: 3003
+
+ 

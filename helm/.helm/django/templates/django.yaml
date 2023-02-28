@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django
+  labels:
+    app: django
+spec:
+  replicas: {{ .Values.replica }}
+  selector:
+    matchLabels:
+      name: django
+  template:
+    metadata:
+      labels:
+        name: django
+    spec:
+      containers:
+        - name: {{.Chart.Name}}
+          image: {{.Values.image.repository}}:{{.Values.image.tag}}
+          imagePullPolicy: {{.Values.image.pullPolicy}}
+          ports:
+            - containerPort: 3003
+          env:
+            - name: DB_HOST
+              value: "postgres"
+            - name: DB_USER
+              value: "vinhle"
+            - name: DB_NAME
+              value: "tutorial-dev"
+            - name: DB_PASS
+              value: "password"
+            - name: DATABASE_URL
+              value: psql://$(DB_USER):$(DB_PASS)@postgres:5432/$(DB_NAME)

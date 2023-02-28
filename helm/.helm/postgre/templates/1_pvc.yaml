@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: {{.Values.storage}}
+  accessModes:
+    - {{.Values.access}}
+  hostPath:
+    path: "/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+  name: postgres-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - {{.Values.access}}
+  resources:
+    requests:
+      storage: {{.Values.storage}}

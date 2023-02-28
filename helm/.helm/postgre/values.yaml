@@ -1,0 +1,10 @@
+replica: 1
+
+image:
+  repository: postgres
+  tag: 13-alpine
+  pullPolicy: IfNotPresent
+
+
+storage: 5Gi
+access: ReadWriteOnce
